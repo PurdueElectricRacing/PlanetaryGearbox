@@ -2,17 +2,17 @@ function [sigC, sigContactAllowed]= gearFatigue(Np,Ng,Pd,d,n,H,Dp,F,Cmc,rg,rp)
 
 
 %% inputs
-Np=1; %teeth pinion
-Ng=1; %teeth gear
-Pd=1; %pitch diameter
-d=1; %gear diameter
-n=1; %rpm
-H=1; %hp
-dp=1; %diameter pinion
-F=1; %face widtj (gear thickness)
-Cmc=1; %crowned/not
-rg=1; %radius gear
-rp=1; %radius pinion
+% Np=1; %teeth pinion
+% Ng=1; %teeth gear
+% Pd=1; %pitch diameter
+% d=1; %gear diameter
+% n=1; %rpm
+% H=1; %hp
+% dp=1; %diameter pinion
+% F=1; %face widtj (gear thickness)
+% Cmc=1; %crowned/not
+% rg=1; %radius gear
+% rp=1; %radius pinion
 %% constants
 %assume steel on steel gear [Table 14-8]
 Cp=2300;
