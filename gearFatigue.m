@@ -1,3 +1,6 @@
+function [sigC, sigContactAllowed]= gearFatigue(Np,Ng,Pd,d,n,H,Dp,F,Cmc,rg,rp)
+
+
 %% inputs
 Np=1; %teeth pinion
 Ng=1; %teeth gear
@@ -46,5 +49,5 @@ sigContactAllowed=Sc*Zn*CH/(SH*Kt*Kr);
 
 
 
-
+end
 
