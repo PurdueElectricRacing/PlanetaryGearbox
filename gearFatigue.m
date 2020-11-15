@@ -5,8 +5,7 @@ function [sigC, sigContactAllowed]= gearFatigue(Np,Ng,Pd,d,n,H,Dp,F,Cmc,rg,rp)
 % Np=1; %teeth pinion
 % Ng=1; %teeth gear
 % Pd=1; %pitch diameter
-% d=1; %gear diameter
-% n=1; %rpm
+ 
 % H=1; %hp
 % dp=1; %diameter pinion
 % F=1; %face widtj (gear thickness)
