@@ -22,7 +22,7 @@ pd_stand = [6 8 10 12 16]; %diametral pitch
 for ring_OD = ringOD_min:0.1:ringOD_max
     Nr = zeros(1, numel(pd_stand));
     %Finds all the possible ring gear teeth counts for specific desired OD
-    %and diametral pitch value
+    %and
     for i=1:numel(pd_stand)
         Nr(i) = round(pd_stand(i)*ring_OD);
     end
@@ -43,8 +43,7 @@ for ring_OD = ringOD_min:0.1:ringOD_max
         end
     end
 
-    %Finds all possible planet teeth counts that can actually mesh with
-    %previously found sun and ring gears
+    %Finds all possible planet 
     Np = zeros(size(Ns));
     [row,col] = size(Ns);
     for i=1:numel(Nr)
@@ -66,12 +65,9 @@ for ring_OD = ringOD_min:0.1:ringOD_max
             end
         end
     end
-    
-    %output all the possible setups for a set ring gear OD
     ring_OD
     Nr_2 = transpose(Nr);
     Final = cat(2,Nr_2,Ns(:,1),Np(:,1),Ns(:,2),Np(:,2))
-    
 end
 
     
