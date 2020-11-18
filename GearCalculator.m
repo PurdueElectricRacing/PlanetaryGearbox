@@ -16,7 +16,7 @@ function GearCalculator(gr,range,planets, ringOD_min, ringOD_max)
 %planet and sun setups, hence Ns2 and Np2)
 %% INPUTS
 %gr = desired gear ratio
-pd_stand = [6 8 10 12 16]; %diametral pitch
+pd_stand = [14 16 18 20 22]; %diametral pitch
 
 %% CALCULATIONS
 for ring_OD = ringOD_min:0.1:ringOD_max
@@ -29,7 +29,7 @@ for ring_OD = ringOD_min:0.1:ringOD_max
     
     %Finds all the sun gear teeth counts that allow to have desired gear
     %ratio for each diametral pitch value
-    Ns = zeros(3,2);
+    Ns = zeros(5,2);
     for i=1:numel(Nr)
         count = 1;
         for j=1:25
@@ -45,6 +45,7 @@ for ring_OD = ringOD_min:0.1:ringOD_max
 
     %Finds all possible planet teeth counts that can actually mesh with
     %previously found sun and ring gears
+    gearR = zeros(size(Ns));
     Np = zeros(size(Ns));
     [row,col] = size(Ns);
     for i=1:numel(Nr)
@@ -55,11 +56,14 @@ for ring_OD = ringOD_min:0.1:ringOD_max
                     planet = (Nr(i)-Ns(i,j))/2;
                     if floor(planet) == planet
                         Np(i,j) = (Nr(i)-Ns(i,j))./2;
+                        gearR(i,j) = 1 + Nr(i)./Ns(i,j);
                     else
                         Np(i,j) = 0;
+                        gearR(i,j) = 0;
                     end
                 else 
                     Np(i,j) = 0;
+                    gearR(i,j) = 0;
                 end
             else
                 break
@@ -68,9 +72,13 @@ for ring_OD = ringOD_min:0.1:ringOD_max
     end
     
     %output all the possible setups for a set ring gear OD
-    ring_OD
+    fprintf('Ring OD: %.2f', ring_OD)
     Nr_2 = transpose(Nr);
-    Final = cat(2,Nr_2,Ns(:,1),Np(:,1),Ns(:,2),Np(:,2))
+    pd_2 = transpose(pd_stand);
+    Final = cat(2,pd_2,Nr_2,Ns(:,1),Np(:,1),Ns(:,2),Np(:,2),gearR(:,1), gearR(:,2));
+    colNames = {'P_d','Nr','Ns','Np','Ns2','Np2','GR1','GR2'};
+    gear_table = array2table(Final, 'VariableNames',colNames)
+    
     
 end
 

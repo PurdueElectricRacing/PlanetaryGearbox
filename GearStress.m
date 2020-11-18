@@ -16,10 +16,10 @@ function GearStress(pd, ring_n, sun_n, planet_n, J_s, J_p)
 
 %% PREDEFINED CONSTANT
 %Track and Vehicle Variables
-end_time = 20; %length of endurance in minutes
-Ne = 5; %Number of endurance laps ran
-motor_rpm = 8000; %[rpm]
-torque = 10; %[Nm]
+end_time = 25; %length of endurance in minutes
+Ne = 160; %Number of endurance events ran
+motor_rpm = 4000; %[rpm]
+torque = 15; %[Nm]
 hp = torque*motor_rpm/9.5488/1000*1.34; %[hp]
 
 %Gear Variables
@@ -27,19 +27,19 @@ dp_s = sun_n/pd; %pitch diameter sun [in]
 dp_p = planet_n/pd; %pitch diameter planet [in]
 Pa = 20; %Pressure angle [deg]
 F_s = 1; %face width of sun [in]
-F_p = 0.5; %face width of planet [in]
+F_p = 1; %face width of planet [in]
 
 Y_tab = xlsread('Lewis Factor'); %Lewis Form Factor Table
 N_s = motor_rpm * end_time * Ne * 3; %load cycle for sun gear
 N_p = motor_rpm / (planet_n/sun_n) * end_time * Ne; %load cycle for planet gear
 
 %Material/Manufacturing Properties
-qV = 10; %quality 
+qV = 12; %quality 
 % v_s %poisson's ratio for sun
 % v_p %poisson's ratio for planet
 % E_s %Young's modulus of sun
 % E_p %Young's modulus of planet
-Hb = 300; %Brinell Hardness guess
+Hb = 400; %Brinell Hardness guess
 
 %% STRESS COEFFICIENT CALCULATIONS
 V = (pi*dp_s*motor_rpm)/12; %Pitch Line Velocity
