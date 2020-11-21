@@ -25,8 +25,10 @@ hp = torque*motor_rpm/9.5488/1000*1.34; %[hp]
 %Gear Variables
 dp_s = sun_n/pd; %pitch diameter sun [in]
 dp_p = planet_n/pd; %pitch diameter planet [in]
+fprintf('dp_s = %f\ndp_p = %f\n',dp_s, dp_p)
+
 Pa = 20; %Pressure angle [deg]
-F_s = 1; %face width of sun [in]
+F_s = 1.6; %face width of sun [in]
 F_p = 1; %face width of planet [in]
 
 Y_tab = xlsread('Lewis Factor'); %Lewis Form Factor Table
@@ -34,12 +36,12 @@ N_s = motor_rpm * end_time * Ne * 3; %load cycle for sun gear
 N_p = motor_rpm / (planet_n/sun_n) * end_time * Ne; %load cycle for planet gear
 
 %Material/Manufacturing Properties
-qV = 12; %quality 
+qV = 10; %quality 
 % v_s %poisson's ratio for sun
 % v_p %poisson's ratio for planet
 % E_s %Young's modulus of sun
 % E_p %Young's modulus of planet
-Hb = 400; %Brinell Hardness guess
+Hb = 340; %Brinell Hardness guess
 
 %% STRESS COEFFICIENT CALCULATIONS
 V = (pi*dp_s*motor_rpm)/12; %Pitch Line Velocity
