@@ -16,10 +16,17 @@ function compound2(gr,planets, minOD, maxOD, sunOD_min)
 %planet and sun setups, hence Ns2 and Np2)
 %% INPUTS
 %gr = desired gear ratio
+%minOD = 2 * (sun radius + big planet diameter) (minimum value)
+%maxOD = 2 * (sun radius + big planet diameter) (maximum value)
+%sunOD_min = minimum OD of sun gear that allows a motor shaft to properly
+%fit through
+
 pd_stand = [16 18 20 22 24]; %diametral pitch
 
 %% CALCULATIONS
-for ring_OD = minOD:0.01:maxOD
+for ring_OD = minOD:0.01:maxOD %ring_OD is imaginary ring gear around first stage
+    
+  %%first stage calculations
     Nr = zeros(1, numel(pd_stand));
     %Finds all the possible ring gear teeth counts for specific desired OD
     %and diametral pitch value
@@ -27,17 +34,16 @@ for ring_OD = minOD:0.01:maxOD
         Nr(i) = round(pd_stand(i)*ring_OD);
     end
     
-    %Finds all the sun gear teeth counts that allow to have desired gear
-    %ratio for each diametral pitch value
+    %Finds sun and planet gears
     Ns = round(pd_stand.*sunOD_min);
     Np = zeros(1,numel(Ns));
     for i=1:numel(Nr)
-        real = (Nr(i)+Ns(i))/planets;
+        real = (Nr(i)+Ns(i))/planets; %condition 2
         while floor(real) ~= real
             Ns(i) = Ns(i) + 1;
             real = (Nr(i)+Ns(i))/planets;
         end
-        planet = (Nr(i)-Ns(i))/2;
+        planet = (Nr(i)-Ns(i))/2; %condition 1
         if floor(planet) == planet
             Np(i) = (Nr(i)-Ns(i))./2;
         else
@@ -45,6 +51,7 @@ for ring_OD = minOD:0.01:maxOD
         end
     end
     
+  %%second stage calculations
     ring_OD2 = 0.8*ring_OD;
     Nr2 = round(ring_OD2*pd_stand);
     Np2 = zeros(1,numel(Nr2));
@@ -52,7 +59,7 @@ for ring_OD = minOD:0.01:maxOD
     for i=1:numel(Np)
        if Np(i) ~= 0
            Np2(i) = round(1 ./ ((gr - 1) .* Ns(i) ./ Np(i) ./ Nr2(i))); 
-           Ns2(i) = Nr2(i) - 2*Np2(i);
+           Ns2(i) = Nr2(i) - 2*Np2(i); %condition 1
            while floor(Ns2) ~= Ns2
                Np2(i) = Np2(i) + 1;
                Ns2(i) = Nr2(i) - 2*Np2(i);
