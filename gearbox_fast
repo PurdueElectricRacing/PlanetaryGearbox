@@ -60,18 +60,11 @@ while (max_ring_teeth / 3) ~= round(max_ring_teeth / 3)
 end
 
 
-% calculate matrix of all possible gear diameters
+% calculate matrix of all possible gear tooth counts
 sun_teeth = transpose([min_sun_teeth:3:max_sun_teeth]);
-sun_diameters = sun_teeth ./ pd_stand;
-
 planet1_teeth = transpose(min_planet1_teeth:max_planet1_teeth);
-planet1_diameters = planet1_teeth ./ pd_stand;
-
 ring_teeth = transpose([min_ring_teeth:3:max_ring_teeth]);
-ring_diameters = ring_teeth ./ pd_stand;
-
 planet2_teeth = transpose(min_planet2_teeth:max_planet2_teeth);
-planet2_diameters = planet2_teeth ./ pd_stand;
 
 
 % construct a matrix of all possible teeth configurations for the 4 gears
@@ -91,13 +84,12 @@ for i = 1:num_pitches
     pd = pd_stand(i);
     for sun = 1:num_sun_gears
         for planet1 = 1:num_planet1_gears
-            test_OD = sun_diameters(sun,i) + (2 * planet1_diameters(planet1,i));
+            test_OD = (sun_teeth(sun) + (2 * planet1_teeth(planet1))) / pd;
             if (maxOD >= test_OD)
                 for planet2 = 1:num_planet2_gears
                     for ring = 1:num_ring_gears
-                        planet1_axis = sun_diameters(sun,i) + planet1_diameters(planet1,i);
-                        planet2_axis = ring_diameters(ring,i) - planet2_diameters(planet2,i);
-                        if planet1_axis == planet2_axis
+                        planet1_axis = (sun_teeth(sun) + planet1_teeth(planet1)) / pd;
+                        if (planet1_teeth(planet1) + sun_teeth(sun)) == (ring_teeth(ring) - planet2_teeth(planet2))
                             gr_test = (planet1_teeth(planet1) / sun_teeth(sun) * ring_teeth(ring) / planet2_teeth(planet2)) + 1;
                             if (gr_test >= gr(1) && gr_test <= gr(2)) || (gr_test >= gr(3) && gr_test <= gr(4))
                                 counter = counter + 1;
