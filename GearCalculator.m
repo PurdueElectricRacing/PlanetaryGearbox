@@ -16,10 +16,12 @@ function GearCalculator(gr,range,planets, ringOD_min, ringOD_max)
 %planet and sun setups, hence Ns2 and Np2)
 %% INPUTS
 %gr = desired gear ratio
-pd_stand = [14 16 18 20 22]; %diametral pitch
+pd_stand = [16 18 20 22 24]; %diametral pitch
+motorS_d = .709;
+pA = 20; %pressure angle
 
 %% CALCULATIONS
-for ring_OD = ringOD_min:0.1:ringOD_max
+for ring_OD = ringOD_min:0.01:ringOD_max
     Nr = zeros(1, numel(pd_stand));
     %Finds all the possible ring gear teeth counts for specific desired OD
     %and diametral pitch value
@@ -32,11 +34,12 @@ for ring_OD = ringOD_min:0.1:ringOD_max
     Ns = zeros(5,2);
     for i=1:numel(Nr)
         count = 1;
-        for j=1:25
+        for j=1:30
             gr_init = 1 + Nr(i)./j;
+            base_circ = j/pd_stand(i)*cosd(pA);
             if gr_init < (gr-range)
                 break
-            elseif gr_init >= (gr - range) && gr_init <= (gr+range)
+            elseif gr_init >= (gr - range) && gr_init <= (gr+range) 
                 Ns(i,count) = j;
                 count = count + 1;
             end  
@@ -81,5 +84,3 @@ for ring_OD = ringOD_min:0.1:ringOD_max
     
     
 end
-
-    

@@ -1,4 +1,4 @@
-function GearStress(pd, ring_n, sun_n, planet_n, J_s, J_p)
+function GearStress(pd, sun_n, planet_n, J_s)
 %% NOTE
 %INPUTS:
 %pd = diametral pitch (don't confuse this as pitch diameter. Following
@@ -12,14 +12,14 @@ function GearStress(pd, ring_n, sun_n, planet_n, J_s, J_p)
 %of the code using Figure 14-6 from Shigleys 10th ed
 %
 %This code does not check for valid inputs of run, sun, and planet teeth.
-%These must be figured out using the GearCalculator.m script
+%These must be figured out using the GearCalculator.m script-
 
 %% PREDEFINED CONSTANT
 %Track and Vehicle Variables
 end_time = 25; %length of endurance in minutes
 Ne = 160; %Number of endurance events ran
-motor_rpm = 4000; %[rpm]
-torque = 15; %[Nm]
+motor_rpm = 7017; %[rpm]
+torque = 26.36/3; %[Nm]
 hp = torque*motor_rpm/9.5488/1000*1.34; %[hp]
 
 %Gear Variables
@@ -39,7 +39,7 @@ qV = 12; %quality
 % v_p %poisson's ratio for planet
 % E_s %Young's modulus of sun
 % E_p %Young's modulus of planet
-Hb = 400; %Brinell Hardness guess
+Hb = 330; %Brinell Hardness guess
 
 %% STRESS COEFFICIENT CALCULATIONS
 V = (pi*dp_s*motor_rpm)/12; %Pitch Line Velocity
@@ -80,7 +80,7 @@ Ce = 0.9; %other conditions
 Km = 1 + Cmc * (Cpf*Cpm + Cma*Ce);
 
 %Rim Thickness Factor
-Kb=1; %assume thick enough rim
+Kb=3.64; %assume thick enough rim
 
 %Overload Factor
 Ko = 1.5;
