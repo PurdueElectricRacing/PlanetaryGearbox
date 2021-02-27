@@ -1,4 +1,4 @@
-function GearStress(pd, sun_n, planet_n, J_s)
+function GearStress_Old(pd, sun_n, planet_n, J_s)
 %% NOTE
 %INPUTS:
 %pd = diametral pitch (don't confuse this as pitch diameter. Following
@@ -12,13 +12,12 @@ function GearStress(pd, sun_n, planet_n, J_s)
 %of the code using Figure 14-6 from Shigleys 10th ed
 %
 %This code does not check for valid inputs of run, sun, and planet teeth.
-%These must be figured out using the GearCalculator.m script-
+%These must be figured out using the GearCalculator.m script
 
 %% PREDEFINED CONSTANT
 %Track and Vehicle Variables
 end_time = 25; %length of endurance in minutes
 Ne = 160; %Number of endurance events ran
-
 motor_rpm = 7017; %[rpm]
 torque = 26.36/3; %[Nm]
 hp = torque*motor_rpm/9.5488/1000*1.34; %[hp]
