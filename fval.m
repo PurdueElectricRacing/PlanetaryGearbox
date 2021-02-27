@@ -1,3 +1,4 @@
+
 function val = fval(x, GR_front_target, GR_rear_target)
 %% Gear Ratio Objective Function
 %
@@ -41,3 +42,4 @@ rear_gr = (rear_planet_s1_teeth * rear_ring_teeth) / ...
 %% Calculate objective
 val = (front_gr - GR_front_target) ^ 2;
 val = val + (rear_gr - GR_rear_target) ^ 2;
+

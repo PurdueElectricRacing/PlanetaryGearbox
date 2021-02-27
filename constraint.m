@@ -81,3 +81,4 @@ val = val + PENALTY * sum(check_sun_arr < sun_shaft_diameter);
 
 % Enforce upper bounds on x
 val = val + PENALTY * sum(x > maxX);
+

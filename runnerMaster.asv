@@ -1,0 +1,64 @@
+%% Runs the runner function
+
+%% Create Threadpool
+p = gcp('nocreate');
+
+if ~isempty(p)
+    delete(p);
+end
+
+cpu_threads = max(1, str2num(getenv('NUMBER_OF_PROCESSORS')) - 2);
+
+p = parpool(cpu_threads);
+
+%% Constants
+pop_factor = 4;
+num_front_designs = 5;
+
+%% Run Front GA
+
+num_runs = 100;
+data_front = zeros(num_runs * num_front_designs, 11);
+
+parfor i = 1:num_runs * num_front_designs
+    [FOPT, planet_d1_act, planet_d2_act, sun_d1_act, ring_d2_act, ...
+    dp, gr_act] = runnerFront(pop_factor)
+    data_front(i, :) = [FOPT, planet_d1_act, planet_d2_act, sun_d1_act, ...
+                ring_d2_act, dp, gr_act, planet_d1_act * dp, ...
+                planet_d2_act * dp, sun_d1_act * dp, ring_d2_act * dp];    
+end
+
+csvwrite('ga_results_front.csv', data_front);
+
+[~, indexes] = sort(data_front(:, 1));
+best_indexes = indexes(1:num_front_designs);
+top_runs = data_front(best_indexes, :);
+
+%% Run Rear GA
+
+data_rear = zeros(num_runs * num_front_designs, 11);
+planets_diameter_axis_arr_pre = sum(top_runs(:, [2 4]), 2);
+planets_diameter_axis_arr = zeros(num_runs * num_front_designs, 1);
+
+for j = 1:num_runs * num_front_designs
+    lookup_idx = floor((1 - j) / num_runs);
+    disp(lookup_idx);
+    planets_diameter_axis_arr(j) = planets_diameter_axis_arr(lookup_idx);
+end
+
+%% FUCK u
+
+parfor i = 1:num_runs * num_front_designs
+    planets_diameter_axis = planets_diameter_axis_arr(i);
+    
+    [FOPT, planet_d1_act, planet_d2_act, sun_d1_act, ring_d2_act, ...
+    dp, gr_act] = runnerFront(pop_factor)
+    data_front(i, :) = [FOPT, planet_d1_act, planet_d2_act, sun_d1_act, ...
+                ring_d2_act, dp, gr_act, planet_d1_act * dp, ...
+                planet_d2_act * dp, sun_d1_act * dp, ring_d2_act * dp];     
+end
+
+csvwrite('ga_results_front.csv', data_rear);
+
+%% Cleanup
+delete(p)
