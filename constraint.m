@@ -1,57 +1,84 @@
-function val = constraint(x, bearing_d, sun_extrusion_d)
-%% Planetary Gearbox GA Constraint Function
-% Elliot Stockwell 1/12/21
+function val = constraint(x, bearing_diameter, planet_shaft_diameter, sun_shaft_diameter, maxX)
+%% Gear Ratio Constraint Function
 %
-% x : array of input variables (planet_d1, planet_d2, sun_d1, dp)
-% bearing_d : inner diameter of the bearing
+% X is formatted
+% [ 
+%   front_ring_teeth / 3
+%   front_planet_s2_teeth
+%   front_sun_teeth / 3
+%   rear_planet_s2_teeth
+%   rear_sun_teeth / 3
+%   diametral_pitch
+% ]
 
-pm = 1E2; % penalty multiplier
+%% GA Constants
+PENALTY = 1e2;
+val = 0;
 
-planet_d1 = x(1);
-planet_d2 = x(2);
-sun_d1 = x(3);
-dp = 12 + 4 * x(4);
-ring_d2 = planet_d1 + planet_d2 + sun_d1;
+%% Interpret x
+front_ring_teeth = 3 * x(1);
+front_planet_s2_teeth = x(2);
+front_sun_teeth = 3 * x(3);
+rear_planet_s2_teeth = x(4);
+rear_sun_teeth = 3 * x(5);
+dp = 12 + 4 * x(6);
 
-g = zeros(1, 8);
 
-mod_tolerance = .01;
+%% Calculate derived variables
+rear_ring_teeth = front_ring_teeth;
 
-%% Make sure teeth are integers
-planet_1_mod = mod(dp * planet_d1, 1);
-planet_2_mod = mod(dp * planet_d2, 1);
-sun_mod = mod(dp * sun_d1, 3);
-ring_mod = mod(dp * ring_d2, 3);
+front_planet_s1_teeth = front_ring_teeth - ...
+    front_planet_s2_teeth - front_sun_teeth;
 
-if sun_mod < 3 - mod_tolerance && sun_mod > mod_tolerance
-    g(1) = pm;
+rear_planet_s1_teeth = rear_ring_teeth - ...
+    rear_planet_s2_teeth - rear_sun_teeth;
+
+
+%% Calculate diameters
+front_ring_diameter = front_ring_teeth / dp;
+front_planet_s1_diameter = front_planet_s1_teeth / dp;
+front_planet_s2_diameter = front_planet_s2_teeth / dp;
+front_sun_diameter = front_sun_teeth / dp;
+
+rear_ring_diameter = rear_ring_teeth / dp;
+rear_planet_s1_diameter = rear_planet_s1_teeth / dp;
+rear_planet_s2_diameter = rear_planet_s2_teeth / dp;
+rear_sun_diameter = rear_sun_teeth / dp;
+
+
+%% Calculate side constraints
+% Variables
+comp_planet_diameter = (front_sun_diameter + front_planet_s1_diameter) / (rear_sun_diameter + rear_planet_s1_diameter) - 1;
+
+% Don't exceed bearing bounds
+if 2 * front_planet_s1_diameter + front_sun_diameter > bearing_diameter
+    val = val + PENALTY;
 end
 
-if ring_mod < 3 - mod_tolerance && ring_mod > mod_tolerance
-    g(2) = pm;
+if 2 * rear_planet_s1_diameter + rear_sun_diameter > bearing_diameter
+    val = val + PENALTY;
 end
 
-if planet_1_mod < 1 - mod_tolerance && planet_1_mod > mod_tolerance
-    g(3) = pm;
+if comp_planet_diameter < -0.01 || comp_planet_diameter > 0.01
+    val = val + PENALTY;
 end
 
-if planet_2_mod < 1 - mod_tolerance && planet_2_mod > mod_tolerance
-    g(4) = pm;
-end
+% Make sure every gear is larger than the shaft that runs through it
+check_planet_arr = [...
+    front_planet_s1_diameter, ...
+    front_planet_s2_diameter, ...
+    rear_planet_s1_diameter, ...
+    rear_planet_s2_diameter];
 
-%% Side constraints
-if dp > 24
-    g(5) = pm;
-end
+check_sun_arr = [...
+    front_sun_diameter, ...
+    rear_sun_diameter];
 
-g(6) = max(0, (sun_d1 + 2 * planet_d1) / bearing_d - 1) * pm;
+% Count occurances where the constriant is violated
+val = val + PENALTY * sum(check_planet_arr < planet_shaft_diameter);
 
-g(7) = max(0, (planet_d2 / (0.45 * ring_d2)) - 1) * pm;
+val = val + PENALTY * sum(check_sun_arr < sun_shaft_diameter);
 
-if sun_d1 < sun_extrusion_d
-    g(8) = pm;
-end
-%% Sum constriants
-val = sum(g);
-
+% Enforce upper bounds on x
+val = val + PENALTY * sum(x > maxX);
 
